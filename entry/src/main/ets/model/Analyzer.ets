@@ -15,7 +15,10 @@ export const OBSERVABLE_TAGS: ObservableTag[] = [
 export function localAnalyze(imageUri: string, keys: string[]): ObservationRecord {
   let observations: Observation[] = OBSERVABLE_TAGS
     .filter((tag: ObservableTag) => keys.includes(tag.key))
-    .map((tag: ObservableTag) => ({ label: tag.label, note: tag.note }));
+    .map((tag: ObservableTag): Observation => {
+      const observation: Observation = { label: tag.label, note: tag.note };
+      return observation;
+    });
   if (observations.length === 0) {
     observations = [{
       label: '画面已记录',
@@ -82,17 +85,25 @@ export async function analyze(imageUri: string, keys: string[], config: CloudCon
   try {
     const remote = await cloudAnalyze(imageUri, keys, config.endpoint);
     return {
-      ...local,
+      id: local.id,
+      createdAt: local.createdAt,
+      imageUri: local.imageUri,
       mode: '云端辅助',
       observations: remote.observations,
       summary: remote.summary,
-      suggestion: remote.suggestion
+      suggestion: remote.suggestion,
+      feedback: local.feedback
     };
   } catch (error) {
     return {
-      ...local,
-      mode: '本地观察（云端不可用）'
+      id: local.id,
+      createdAt: local.createdAt,
+      imageUri: local.imageUri,
+      mode: '本地观察（云端不可用）',
+      observations: local.observations,
+      summary: local.summary,
+      suggestion: local.suggestion,
+      feedback: local.feedback
     };
   }
 }
-
