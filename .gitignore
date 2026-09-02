@@ -1,0 +1,10 @@
+.idea/
+.hvigor/
+.ohos/
+build/
+**/build/
+local.properties
+*.p12
+*.cer
+*.pem
+
