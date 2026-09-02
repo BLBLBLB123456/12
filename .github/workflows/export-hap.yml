@@ -1,0 +1,46 @@
+name: Export HarmonyOS HAP
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  build:
+    name: Build unsigned debug HAP
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dalongzhuazi/harmonyos-ci:api26
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install HarmonyOS dependencies
+        run: ohpm install --all
+
+      - name: Build HAP
+        run: hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon --stacktrace
+
+      - name: Collect HAP
+        run: |
+          set -eu
+          mkdir -p dist
+          hap_path=$(find entry/build -type f -name '*.hap' -path '*/outputs/*' -print -quit)
+          test -n "$hap_path"
+          cp "$hap_path" dist/behavior-observer-unsigned.hap
+          test -s dist/behavior-observer-unsigned.hap
+
+      - name: Upload HAP
+        uses: actions/upload-artifact@v4
+        with:
+          name: behavior-observer-hap-unsigned
+          path: dist/*.hap
+          if-no-files-found: error
+          retention-days: 14

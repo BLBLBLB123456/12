@@ -11,7 +11,7 @@ interface ResultParams {
 @Entry
 @Component
 struct Result {
-  @State private record?: ObservationRecord;
+  @State private record: ObservationRecord | undefined = undefined;
   @State private date: string = '';
 
   aboutToAppear(): void {
@@ -33,8 +33,18 @@ struct Result {
     }
     const context = getContext(this) as common.UIAbilityContext;
     await RecordStore.feedback(context, this.record.id, value);
-    this.record.feedback = value;
-    this.record = { ...this.record };
+    const current = this.record;
+    current.feedback = value;
+    this.record = {
+      id: current.id,
+      createdAt: current.createdAt,
+      imageUri: current.imageUri,
+      mode: current.mode,
+      observations: current.observations,
+      summary: current.summary,
+      suggestion: current.suggestion,
+      feedback: current.feedback
+    };
     promptAction.showToast({ message: '已记录反馈' });
   }
 
@@ -128,4 +138,3 @@ struct Result {
       .onClick(() => this.setFeedback(value))
   }
 }
-

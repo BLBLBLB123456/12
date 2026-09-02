@@ -6,7 +6,7 @@ import { CloudConfig } from '../model/Types';
 @Entry
 @Component
 struct Settings {
-  @State private enabled: boolean = false;
+  @State private cloudEnabled: boolean = false;
   @State private endpoint: string = '';
 
   aboutToAppear(): void {
@@ -15,16 +15,16 @@ struct Settings {
 
   private async load(): Promise<void> {
     const config = await RecordStore.cloudConfig(getContext(this) as common.UIAbilityContext);
-    this.enabled = config.enabled;
+    this.cloudEnabled = config.enabled;
     this.endpoint = config.endpoint;
   }
 
   private async save(): Promise<void> {
-    if (this.enabled && !this.endpoint.startsWith('https://')) {
+    if (this.cloudEnabled && !this.endpoint.startsWith('https://')) {
       promptAction.showToast({ message: '请输入 HTTPS 接口地址' });
       return;
     }
-    const config: CloudConfig = { enabled: this.enabled, endpoint: this.endpoint.trim() };
+    const config: CloudConfig = { enabled: this.cloudEnabled, endpoint: this.endpoint.trim() };
     await RecordStore.saveCloudConfig(getContext(this) as common.UIAbilityContext, config);
     promptAction.showToast({ message: '设置已保存' });
   }
@@ -59,11 +59,11 @@ struct Settings {
               Text('开启后，照片会上传到你配置的服务。失败时自动使用本地模式。')
                 .fontSize(14).fontColor('#73798B').lineHeight(21).width('100%')
             }.alignItems(HorizontalAlign.Start).layoutWeight(1)
-            Toggle({ type: ToggleType.Switch, isOn: this.enabled })
-              .selectedColor('#4056D6').onChange((value: boolean) => this.enabled = value)
+            Toggle({ type: ToggleType.Switch, isOn: this.cloudEnabled })
+              .selectedColor('#4056D6').onChange((value: boolean) => this.cloudEnabled = value)
           }.padding(20).borderRadius(20).backgroundColor(Color.White)
 
-          if (this.enabled) {
+          if (this.cloudEnabled) {
             Column({ space: 12 }) {
               Text('云端接口地址').fontSize(18).fontWeight(FontWeight.Bold).width('100%')
               TextInput({ text: this.endpoint, placeholder: 'https://example.com/analyze' })
