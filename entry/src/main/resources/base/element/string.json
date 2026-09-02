@@ -1,0 +1,9 @@
+{
+  "string": [
+    { "name": "app_name", "value": "观行镜" },
+    { "name": "module_desc", "value": "隐私优先的行为观察应用" },
+    { "name": "ability_desc", "value": "记录可观察行为线索" },
+    { "name": "internet_reason", "value": "仅在用户主动开启云端辅助后上传待分析图片" }
+  ]
+}
+
