@@ -18,12 +18,15 @@ struct Observe {
   aboutToAppear(): void {
     const params = router.getParams() as ObserveParams;
     this.imageUri = params.imageUri || '';
-    this.tags = OBSERVABLE_TAGS.map((item: ObservableTag) => ({
-      key: item.key,
-      label: item.label,
-      note: item.note,
-      selected: false
-    }));
+    this.tags = OBSERVABLE_TAGS.map((item: ObservableTag): ObservableTag => {
+      const tag: ObservableTag = {
+        key: item.key,
+        label: item.label,
+        note: item.note,
+        selected: false
+      };
+      return tag;
+    });
   }
 
   private toggle(key: string): void {
