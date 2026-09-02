@@ -32,8 +32,10 @@ jobs:
         run: |
           set -eu
           mkdir -p dist
-          find . -type f -name '*.hap' -path '*/outputs/*' -not -path './oh_modules/*' -exec cp -v {} dist/ +
-          test -n "$(find dist -maxdepth 1 -type f -name '*.hap' -print -quit)"
+          hap_path=$(find entry/build -type f -name '*.hap' -path '*/outputs/*' -print -quit)
+          test -n "$hap_path"
+          cp "$hap_path" dist/behavior-observer-unsigned.hap
+          test -s dist/behavior-observer-unsigned.hap
 
       - name: Upload HAP
         uses: actions/upload-artifact@v4
